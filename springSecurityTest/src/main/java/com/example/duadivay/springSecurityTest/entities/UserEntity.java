@@ -1,8 +1,7 @@
 package com.example.duadivay.springSecurityTest.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,21 +11,28 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String username;
+    @Column(unique = true, nullable = false)
+    private String email;
 
+    @Column(nullable = false)
     private String password;
 
     private String name;
 
-    @Getter
-    private String email;
+
+    @Override
+    public String getUsername() {
+        return this.email;  // using email as username
+    }
 
     @Override
     public String getPassword() {
@@ -34,13 +40,8 @@ public class UserEntity implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return this.username;  // usually username is used for login, not name
-    }
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(); // empty for now, you can add roles later
+        return List.of(); // can add roles later
     }
 
     @Override

@@ -20,36 +20,21 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        var user = org.springframework.security.core.userdetails.User
-                .withUsername("divay")
-                .password(passwordEncoder.encode("pass"))  // bcrypt encoded
-                .roles("USER")
-                .build();
-
-        var admin = org.springframework.security.core.userdetails.User
-                .withUsername("admin")
-                .password(passwordEncoder.encode("pass@123"))
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
-    }
+    // Removed InMemoryUserDetailsManager - using database-based authentication
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        HttpSecurity logout = httpSecurity
+        httpSecurity
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers("/public/**").permitAll()   // give any of your 'get' request endpoint
+                                .requestMatchers("/public/**", "/test-users").permitAll()   // give any of your 'get' request endpoint
                                 .anyRequest().authenticated())  // All other requests require authentication
 
                 .csrf(csrfConfig ->  // Disable CSRF for simplicity, not recommended for production
                         csrfConfig
                                 .disable())
-                .sessionManagement(sessionConfig ->   // Disable JSESSIONID for simplicity, not recommended for production
+                .sessionManagement(sessionConfig ->   // Enable sessions for form login
                         sessionConfig
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
                 .formLogin(Customizer.withDefaults())  // Enable form login here I use default login
 
