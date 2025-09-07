@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Table(name="users")
 public class UserEntity implements UserDetails {
 
     @Id
@@ -41,7 +42,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(); // can add roles later
+        return List.of(() -> "ROLE_USER"); // Default role for all users
     }
 
     @Override
